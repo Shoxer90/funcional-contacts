@@ -11,7 +11,7 @@ const Header = ({openComponent}) => {
             <Button 
                 h="35px"
                 w="100px"
-                name={"+"} 
+                name={"Add new contact"} 
                 func={openComponent}
             />
         </div>

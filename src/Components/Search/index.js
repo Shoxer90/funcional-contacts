@@ -1,19 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
 import styles from "./index.module.scss";
 
 const Search = ({filterContacts}) => {
+    const [inputs, setInputs] = useState("");
 
     const handleSearch = (e) => {
         e.preventDefault();
-        filterContacts();
+        filterContacts(inputs);
     };
 
     return (
         <div className={styles.search}>
-            <form onClick={(e)=>handleSearch}>
-                <input className={styles.input} type="text" placeholder="Get contact from your contact list..." />
-                <button type="submit" >Search</button>
+            <form onSubmit={(e)=>handleSearch(e)}>
+                <input 
+                    className={styles.input}
+                    type="text" 
+                    placeholder="Get contact from your contact list..."
+                    onChange={(e)=>setInputs(e.target.value)}
+                />
+                <button type="submit">Search</button>
             </form>
         </div>
     );
