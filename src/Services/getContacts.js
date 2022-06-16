@@ -1,13 +1,18 @@
-import { collection, query, getDocs } from "firebase/firestore";
-import { fireStore } from "../Config/firebaseInit";
+// import { memo } from "react";
 
-const getContacts = async() => {
-    const q = query(collection(fireStore, "contacts"));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-     console.log(doc.id, " => ", doc.data());
+// import { collection, query, getDocs } from "firebase/firestore";
+// import { fireStore } from "../Config/firebaseInit";
 
-    });
-};
+// const getContacts = async() => {
+//     const fromFB = []
+   
+//     const q = query(collection(fireStore , "contacts"));
+//     const querySnapshot = await getDocs(q);
+//     querySnapshot.forEach((doc) => {
+//         fromFB.push(doc.data());
+//     });
+//     return fromFB;
+// };
 
-export default getContacts;
+// export default memo(getContacts);
+// // 

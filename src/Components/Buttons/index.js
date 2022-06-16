@@ -2,14 +2,14 @@ import React from "react";
 
 import styles from "./index.module.scss";
 
-const Button = ({name,func,h,w}) => {
+const Button = ({name, func}) => {
 
     const handleClick = () => {
         return func();
     };
     
     return (
-        <button className={styles.button} style={{height:h,width:w}}  onClick={()=>handleClick()}>
+        <button className={styles.button} onClick={()=>handleClick()}>
             {name}
         </button>
     );

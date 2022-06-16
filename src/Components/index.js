@@ -1,19 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
+
+import { collection, getDocs, query } from "firebase/firestore";
+import { fireStore } from "../Config/firebaseInit";
 
 import getContacts from "../Services/getContacts";
-import Contacts from "./Contacts";
 
 import Header from "./Header";
-import NewContact from "./NewContact";
 import Search from "./Search";
+import Contacts from "./Contacts";
+import NewContact from "./NewContact";
 
 const Component = () => {
     const [openNewContact, setStatusNewContact] = useState(false);
-    const [contacts, buildContacts] = useState();
+    const [contacts, fillContacts] = useState("");
 
     useEffect(() => {
-       buildContacts();
+        getContactFromBase()
     },[]);
+
+    const getContactFromBase = () => {
+        const fromFB = [];
+        const q = query(collection(fireStore, "contacts"));
+    
+        const querySnapshot = getDocs(q)
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                fromFB.push(doc.data())
+            });
+            fillContacts(fromFB);
+        });
+    };
 
     const openComponent = () => {
         setStatusNewContact(!openNewContact)
@@ -28,10 +44,17 @@ const Component = () => {
         <div>
             <Header openComponent={openComponent}/>
             <Search filterContacts={filterContacts}/>
-            {openNewContact && <NewContact/>}
-            {contacts && <Contacts {...contacts}/>}
+            {openNewContact &&
+                <NewContact 
+                    openComponent={openComponent}
+                    etContactFromBase={getContactFromBase}
+                />
+            }
+            {!openNewContact && 
+                <Contacts contacts={contacts}/>
+            }
         </div>
     );
 };
 
-export default Component;
+export default memo(Component);

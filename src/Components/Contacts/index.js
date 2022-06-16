@@ -1,14 +1,15 @@
-import React, { memo } from "react";
-import ContactItem from "./ContactItem";
+import React from "react";
 
-const Contacts = ({contacts}) => {
+import Contact from "./Contact";
+
+const Contacts = ({ contacts }) => {
     return (
-        contacts.map((contact) => (
+        contacts && contacts.map((contact) => (
             <div key={contact.id}>
-                <ContactItem {...contact}/>
+                <Contact {...contact}/>
             </div>
         ))
     );
 };
-
-export default memo(Contacts);
+ 
+export default Contacts;

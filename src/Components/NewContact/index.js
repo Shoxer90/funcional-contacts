@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-
 import { fireStorage } from "../../Config/firebaseInit";
+import { v4 as uuidv4 } from 'uuid';
 
 import setContacts from "../../Services/setContacts";
 
 import styles from "./index.module.scss";
 
-const Form = () => {
+const Form = ({openComponent, getContactFromBase}) => {
     const [state, setState] = useState({
         firstName: "",
         lastName: "",
@@ -16,7 +16,7 @@ const Form = () => {
         email: "",
         avatar: "",
     });
-
+   
     const handleInputChange = (e) => {
         setState({
             ...state,
@@ -24,31 +24,36 @@ const Form = () => {
         });
     };
 
-    useEffect(() => {
-        setContacts(state)
-        alert("Contact is ready")
-    }, [state.avatar]);
-
-    const handleSetContact = (e) => {
-        e.preventDefault();
-        const imageRef = ref(fireStorage, `contactAvatars/${e.target[4].files[0].name}`);
+    const sendPicToStorage = (e) => {
+        console.log(e.target[4].files[0]?.name)
+        const imageRef = ref(fireStorage, `contactAvatars/${e.target[4].files[0]?.name}`);
             uploadBytes( imageRef, e.target[4].files[0] ).then(() => {
             const imageListRef = ref(fireStorage, `contactAvatars/`);
             listAll(imageListRef).then((response) => {
                 response.items.forEach((item) => {
                     if (item.name === e.target[4].files[0].name) {
                         getDownloadURL(item).then((uploadPicUrl) => {
-                          setState({
+                        setState({
                                 ...state,
+                                id:uuidv4(),
                                 avatar: uploadPicUrl,
                             });
                         });
                     };
                 });
-            });
+            })
         });
     };
 
+    const handleSetContact = (e) => {
+        e.preventDefault();
+      if(e.target[4].files[0]){
+          sendPicToStorage(e)
+      }
+        setContacts(state);
+        openComponent();
+        getContactFromBase();
+    };
 
     return (
         <form onSubmit={handleSetContact} className={styles.newContact}>
@@ -93,6 +98,7 @@ const Form = () => {
                 <input 
                     type="file" 
                     name="avatar" 
+                    // value={state.avatar}
                 />
             </label>
             <button type="submit">add contact</button>

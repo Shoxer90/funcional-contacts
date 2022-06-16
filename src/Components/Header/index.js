@@ -9,8 +9,6 @@ const Header = ({openComponent}) => {
         <div className={styles.header}>
             <h1>Contact list</h1>
             <Button 
-                h="35px"
-                w="100px"
                 name={"Add new contact"} 
                 func={openComponent}
             />
