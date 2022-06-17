@@ -9,19 +9,23 @@ import Header from "./Header";
 import Search from "./Search";
 import Contacts from "./Contacts";
 import NewContact from "./NewContact";
+import Pagination from "./Pagination.js";
 
 const Component = () => {
     const [openNewContact, setStatusNewContact] = useState(false);
     const [contacts, fillContacts] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [contactPerPage] = useState(5);
 
+    
     useEffect(() => {
         getContactFromBase()
     },[]);
-
+    
     const getContactFromBase = () => {
         const fromFB = [];
         const q = query(collection(fireStore, "contacts"));
-    
+        
         const querySnapshot = getDocs(q)
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -29,6 +33,14 @@ const Component = () => {
             });
             fillContacts(fromFB);
         });
+    };
+    
+    const lastContactIndex = currentPage * contactPerPage;
+    const firstContactIndex = lastContactIndex - contactPerPage;
+    const contactsInPage = contacts.slice(firstContactIndex, lastContactIndex);
+
+    const paginate = page => {
+        setCurrentPage(page)
     };
 
     const openComponent = () => {
@@ -51,8 +63,13 @@ const Component = () => {
                 />
             }
             {!openNewContact && 
-                <Contacts contacts={contacts}/>
+                <Contacts contacts={contactsInPage}/>
             }
+            <Pagination
+                contactPerPage={contactPerPage}
+                contactsQuantity={contacts.length}
+                paginate={paginate}
+            />
         </div>
     );
 };
