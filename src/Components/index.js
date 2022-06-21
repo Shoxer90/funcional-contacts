@@ -10,6 +10,7 @@ import Search from "./Search";
 import Contacts from "./Contacts";
 import NewContact from "./NewContact";
 import Pagination from "./Pagination.js";
+import FileInput from "./FileInput.js";
 
 const Component = () => {
     const [openNewContact, setStatusNewContact] = useState(false);
@@ -65,6 +66,7 @@ const Component = () => {
             {!openNewContact && 
                 <Contacts contacts={contactsInPage}/>
             }
+            <FileInput/>
             <Pagination
                 contactPerPage={contactPerPage}
                 contactsQuantity={contacts.length}
