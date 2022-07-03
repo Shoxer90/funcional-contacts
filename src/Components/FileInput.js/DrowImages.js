@@ -1,10 +1,8 @@
 import React from "react";
 
-const DrowImages = ({image}) => {
+const DrowImages = ({image,style}) => {
     return (
-        <div>
-            <img url={image} alt={image} />
-        </div>
+        <img  className={style.imageAploader}src={image} alt={new Date()} />
     );
 };
 

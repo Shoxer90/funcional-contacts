@@ -24,14 +24,20 @@ const Form = ({openComponent, getContactFromBase}) => {
         });
     };
 
+    const dontSetNewContact = (e) => {
+        e.preventDefault();
+        openComponent();
+    }
+
     const sendPicToStorage = (e) => {
         console.log(e.target[4].files[0]?.name)
-        const imageRef = ref(fireStorage, `contactAvatars/${e.target[4].files[0]?.name}`);
+        const picNameId = uuidv4()
+        const imageRef = ref(fireStorage, `contactAvatars/${picNameId}`);
             uploadBytes( imageRef, e.target[4].files[0] ).then(() => {
             const imageListRef = ref(fireStorage, `contactAvatars/`);
             listAll(imageListRef).then((response) => {
                 response.items.forEach((item) => {
-                    if (item.name === e.target[4].files[0].name) {
+                    if (item.name === picNameId) {
                         getDownloadURL(item).then((uploadPicUrl) => {
                         setState({
                                 ...state,
@@ -51,8 +57,8 @@ const Form = ({openComponent, getContactFromBase}) => {
           sendPicToStorage(e)
       }
         setContacts(state);
-        openComponent();
         getContactFromBase();
+        openComponent();
     };
 
     return (
@@ -102,7 +108,7 @@ const Form = ({openComponent, getContactFromBase}) => {
                 />
             </label>
             <button type="submit">add contact</button>
-            <button>go back</button>
+            <button onClick={(e)=>dontSetNewContact(e)}>go back</button>
         </form>
     );
 };

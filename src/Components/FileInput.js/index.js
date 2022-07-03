@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { fireStorage } from "../../Config/firebaseInit";
+
 import { v4 as uuidv4 } from 'uuid';
 
 import DrowImages from "./DrowImages";
@@ -7,35 +10,51 @@ import DrowImages from "./DrowImages";
 import style from "./index.module.scss";
 
 
-const FileInput = () => {
- const [currentImages, setCurrentImages] = useState([]);
+const FileInput = ({id, avatar,setPhotosToFB}) => {
+    const [currentImages, setCurrentImages] = useState([]);
 
- console.log(currentImages)
-    const onFileLoad = () => {
 
+    const onFileLoad = (e) => {
+        Array.from(e.target.files).forEach((file) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () =>{
+               setCurrentImages((currentImages) => [...currentImages, reader.result])
+            }      
+        })
     };
     
-    return (
-        <div className={style.fileLoader}>
-            <div>Drag an image,or load from device</div>
-            <input type="file"
-                multiple
-                className={style.hiddenInputFiles}
-                onDragOver={(e=>{
-                    e.preventDefault()
-                    e.stopPropagation()
-                })}
-                onDrop={()=> onFileLoad}
-                onChange={(e)=> setCurrentImages([...currentImages,e.target?.files[0]?.name])}
+    const handleSetPhotosToFB = (e) => {
+        e.preventDefault();
+        setPhotosToFB(Array.from(e.target[0].files),avatar);
+    };
 
-            />
-            <div className={style.formButton}></div>
+    return (
+        <div className={style.fileLoaderComponent}>
             {currentImages && 
                 currentImages.map((item) =>(
-                    <div key={uuidv4()}>
-                        <DrowImages  image={item}/>
-                    </div>
-            ))}
+                    <span key={uuidv4()}>
+                        <DrowImages  image={item} style={style}/>
+                    </span>
+                ))
+            }
+            <span>Drag an image,or load from device</span>
+            <form onSubmit={(e)=>handleSetPhotosToFB(e)}>
+                <input type="file"
+                    multiple
+                    className={style.hiddenInputFiles}
+                    onDragOver={(e)=>{
+                        e.preventDefault()
+                        e.stopPropagation()
+                    }}
+                    onDrop={()=> onFileLoad}
+                    onChange={(e)=> onFileLoad(e)}
+                />
+                <div>
+                    <button type="submit">Add photos</button>
+
+                </div>
+            </form>
         </div>
     );
 };

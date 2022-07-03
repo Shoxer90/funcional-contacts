@@ -2,11 +2,11 @@ import React from "react";
 
 import Contact from "./Contact";
 
-const Contacts = ({ contacts }) => {
+const Contacts = ({ contacts,removeContact }) => {
     return (
         contacts && contacts.map((contact) => (
             <div key={contact.id}>
-                <Contact {...contact}/>
+            <Contact {...contact} removeContact={removeContact}/>
             </div>
         ))
     );
