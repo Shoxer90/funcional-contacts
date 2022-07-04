@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-import { fireStorage } from "../../Config/firebaseInit";
-
 import { v4 as uuidv4 } from 'uuid';
 
 import DrowImages from "./DrowImages";
@@ -10,31 +7,30 @@ import DrowImages from "./DrowImages";
 import style from "./index.module.scss";
 
 
-const FileInput = ({id, avatar,setPhotosToFB}) => {
+const FileInput = ({avatar, setPhotosToFB}) => {
     const [currentImages, setCurrentImages] = useState([]);
-
 
     const onFileLoad = (e) => {
         Array.from(e.target.files).forEach((file) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () =>{
+            reader.onload = () => {
                setCurrentImages((currentImages) => [...currentImages, reader.result])
             }      
-        })
+        });
     };
     
     const handleSetPhotosToFB = (e) => {
         e.preventDefault();
-        setPhotosToFB(Array.from(e.target[0].files),avatar);
+        setPhotosToFB(Array.from(e.target[0].files), avatar);
     };
 
     return (
         <div className={style.fileLoaderComponent}>
             {currentImages && 
-                currentImages.map((item) =>(
+                currentImages.map((item) => (
                     <span key={uuidv4()}>
-                        <DrowImages  image={item} style={style}/>
+                        <DrowImages  image={item} style={style} />
                     </span>
                 ))
             }
@@ -47,12 +43,11 @@ const FileInput = ({id, avatar,setPhotosToFB}) => {
                         e.preventDefault()
                         e.stopPropagation()
                     }}
-                    onDrop={()=> onFileLoad}
-                    onChange={(e)=> onFileLoad(e)}
+                    onDrop={()=>onFileLoad}
+                    onChange={(e)=>onFileLoad(e)}
                 />
                 <div>
                     <button type="submit">Add photos</button>
-
                 </div>
             </form>
         </div>

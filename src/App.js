@@ -5,12 +5,10 @@ import Component from './Components';
 
 import './App.css';
 
-const App = () => {
-  return (
+const App = () => (
     <DndProvider backend={HTML5Backend}>
-      <div><Component /></div>
+      <Component/>
     </DndProvider>
   );
-};
 
 export default App;

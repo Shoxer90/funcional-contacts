@@ -16,4 +16,9 @@ const Main = () => {
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render (<Main/>);
+
+root.render (
+    <React.StrictMode>
+        <Main />
+    </React.StrictMode>
+);

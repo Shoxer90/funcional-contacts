@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 
 import styles from "./index.module.scss";
 
@@ -26,4 +26,4 @@ const Search = ({ getFilterContacts }) => {
     );
 };
 
-export default Search;
+export default memo(Search);

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-import { fireStorage } from "../../Config/firebaseInit";
 import { v4 as uuidv4 } from 'uuid';
 
+import { fireStorage } from "../../Config/firebaseInit";
 import setContacts from "../../Services/setContacts";
 
 import styles from "./index.module.scss";
@@ -30,7 +30,6 @@ const Form = ({openComponent, getContactFromBase}) => {
     }
 
     const sendPicToStorage = (e) => {
-        console.log(e.target[4].files[0]?.name)
         const picNameId = uuidv4()
         const imageRef = ref(fireStorage, `contactAvatars/${picNameId}`);
             uploadBytes( imageRef, e.target[4].files[0] ).then(() => {
@@ -101,11 +100,7 @@ const Form = ({openComponent, getContactFromBase}) => {
             </label>
             <label>
                 Get photo 
-                <input 
-                    type="file" 
-                    name="avatar" 
-                    // value={state.avatar}
-                />
+                <input type="file" name="avatar"/>
             </label>
             <button type="submit">add contact</button>
             <button onClick={(e)=>dontSetNewContact(e)}>go back</button>

@@ -1,5 +1,6 @@
+import React, {  useState } from "react";
+
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-import React, { useEffect, useState } from "react";
 
 import { fireStorage } from "../../Config/firebaseInit";
 import setPhotosToUserData from "../../Services/setPhotosToUserData";
@@ -32,20 +33,20 @@ const Contact = ({
         const arrOfImg=[] 
         fromFileInput.map((photo)=>{
             const  photoId = uuidv4();
-            const imageRef = ref(fireStorage, `${id}/${photoId}`);
+            const imageRef = ref(fireStorage, `${id}/ ${photoId}`);
             uploadBytes(imageRef, photo).then(() => {
                 const imageListRef = ref(fireStorage, `${id}/`);
                 listAll(imageListRef).then((response) => {
                     let filterData = response.items.filter((item) =>item.name === photoId);
                     filterData.map((item) => (
                         getDownloadURL(item).then((uploadPicUrl) => {
-                            arrOfImg.push(uploadPicUrl)
+                            arrOfImg.push(uploadPicUrl);
                         })
-                    ))
+                    ));
                 });
             });
-        })
-        setUserPhoto(arrOfImg)
+        });
+        setUserPhoto(arrOfImg);
         setPhotosToUserData(userPhoto, id);
     };
 
@@ -54,13 +55,9 @@ const Contact = ({
         setShowDownloader(showDownloader => showDownloader = false);
     };
 
-    const handleOpenDownloader = () => {
-        setShowDownloader(!showDownloader)
-    };
+    const handleOpenDownloader = () => setShowDownloader(!showDownloader);
 
-    const deleteContact = () => {
-        removeContact(id,avatar)
-    };
+    const deleteContact = () => removeContact(id,avatar);
 
     return (
         <div key={id} className={styles.contactItem}>
@@ -72,26 +69,21 @@ const Contact = ({
                     <>
                         <div>Email: {email}</div>
                         {imageArr && <ImageCarret styles={styles} userPhoto={imageArr} />}
-                        <Button
-                            name={"set my pics"}
-                            func={handleOpenDownloader}
-                        />
-                         <Button
-                            name={"go back"} 
-                            func={handleOpenInfo}
-                        />
-                         <Button
-                            name={"Delete contact"} 
-                            func={deleteContact}
-                        />
+                        <Button name={"set my pics"} func={handleOpenDownloader} />
+                        <Button name={"go back"} func={handleOpenInfo} />
+                        <Button name={"Delete contact"} func={deleteContact} />
                     </>
                 }
                 {showDownloader && showMore && 
-                    <FileInput id={id} avatar={avatar} setPhotosToFB={setPhotosToFB}/>}
-                {!showMore && <Button
-                    name={"see more"} 
-                    func={handleOpenInfo}
-                />}
+                    <FileInput 
+                        id={id} 
+                        avatar={avatar} 
+                        setPhotosToFB={setPhotosToFB}
+                    />
+                }
+                {!showMore && 
+                    <Button name={"see more"} func={handleOpenInfo} />
+                }
             </div>  
         </div>
     );

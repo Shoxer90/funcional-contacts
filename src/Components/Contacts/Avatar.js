@@ -1,9 +1,5 @@
-import React from "react";
+import React, { memo } from "react";
 
-const Avatar = ({src,className,alt}) => {
-    return (
-        <img className={className} src={src} alt={alt}/>
-    );
-};
+const Avatar = ({src,className,alt}) => (<img className={className} src={src} alt={alt}/>);
 
-export default Avatar;
+export default memo(Avatar);
