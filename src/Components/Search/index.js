@@ -1,22 +1,29 @@
-import React from "react";
+import React, { memo, useState } from "react";
 
 import styles from "./index.module.scss";
 
-const Search = ({filterContacts}) => {
+const Search = ({ getFilterContacts }) => {
+    const [inputs, setInputs] = useState("");
 
     const handleSearch = (e) => {
         e.preventDefault();
-        filterContacts();
+        getFilterContacts(inputs);
     };
-
+    
     return (
         <div className={styles.search}>
-            <form onClick={(e)=>handleSearch}>
-                <input className={styles.input} type="text" placeholder="Get contact from your contact list..." />
-                <button type="submit" >Search</button>
+            <form onSubmit={handleSearch}>
+                <input 
+                    name="filter"
+                    className={styles.input}
+                    type="text" 
+                    placeholder="Get contact from your contact list..."
+                    onChange={(e) => setInputs(e.target.value)}
+                />
+                <button type="submit">Search</button>
             </form>
         </div>
     );
 };
 
-export default Search;
+export default memo(Search);
