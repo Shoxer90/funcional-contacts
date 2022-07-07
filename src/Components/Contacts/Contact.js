@@ -28,16 +28,15 @@ const Contact = ({
     const [showDownloader, setShowDownloader] = useState(false);
     const [userPhoto, setUserPhoto] = useState([]);
 
-
-    const setPhotosToFB = async(fromFileInput) => {
-        const arrOfImg=[] 
-        fromFileInput.map((photo)=>{
+    const setPhotosToFB = async (fromFileInput) => {
+        const arrOfImg = [];
+        fromFileInput.map( async (photo) => {
             const  photoId = uuidv4();
             const imageRef = ref(fireStorage, `${id}/ ${photoId}`);
-            uploadBytes(imageRef, photo).then(() => {
+            return uploadBytes(imageRef, photo).then(() => {
                 const imageListRef = ref(fireStorage, `${id}/`);
                 listAll(imageListRef).then((response) => {
-                    let filterData = response.items.filter((item) =>item.name === photoId);
+                    let filterData = response.items.filter((item) => item.name === photoId);
                     filterData.map((item) => (
                         getDownloadURL(item).then((uploadPicUrl) => {
                             arrOfImg.push(uploadPicUrl);
@@ -52,12 +51,12 @@ const Contact = ({
 
     const handleOpenInfo = () => {
         setShowMore(!showMore);
-        setShowDownloader(showDownloader => showDownloader = false);
+        setShowDownloader(false);
     };
 
     const handleOpenDownloader = () => setShowDownloader(!showDownloader);
 
-    const deleteContact = () => removeContact(id,avatar);
+    const deleteContact = () => removeContact(id, avatar);
 
     return (
         <div key={id} className={styles.contactItem}>

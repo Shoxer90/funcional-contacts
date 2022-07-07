@@ -1,32 +1,32 @@
-.avatar{
+.avatar {
     border: solid green 1px; 
     border-radius: 45%;
     width: 70px;
     height: 70px;
     margin: 10px;
 }
-.contactItem{
+.contactItem {
     display: flex;
     border: solid hsl(120, 100%, 25%) 1px; 
     border-radius: 10px;
     height: fit-content;
     padding: 10px;
 }
-.contactInfo{
+.contactInfo {
     display: block;
     margin: 10px;
 }
-.imageCarret{
+.imageCarret {
     background-color: rgb(79, 250, 79);
     height: 200px;
     width: auto;
     overflow-x: scroll;
 }
-.userImg{
+.userImg {
     border: solid pink;
     height: 50px;
     width: 50px;
-    >img{
+    img {
         width: fit-content;
     }
 }

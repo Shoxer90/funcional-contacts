@@ -9,22 +9,20 @@ import Header from "./Header";
 import Search from "./Search";
 import Contacts from "./Contacts";
 import NewContact from "./NewContact";
-import Pagination from "./Pagination.js";
+import Pagination from "./Pagination.js/index.js";
 import { deleteObject, ref } from "firebase/storage";
 
-const Component = () => {
+const Container = () => {
     const { contacts, fillContacts } = useContext(ShowContacts);
     const [openNewContact, setStatusNewContact] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [contactPerPage] = useState(5);
 
-    useEffect(() => getContactFromBase(),[]);
-    
     const getContactFromBase = () => {
         const fromFB = [];
         const q = query(collection(fireStore, "contacts"));
 
-        const querySnapshot = getDocs(q)
+        getDocs(q)
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 fromFB.push(doc.data())
@@ -44,11 +42,10 @@ const Component = () => {
 // the function filtring only whole word not includes-must fix it
     const getFilterContacts = tag => {
         const fromFB = [];
-        const contactRef = collection (fireStore,"contacts");
-        const q = query (contactRef,
-            where ("firstName", "==", tag )
-        );
-        const querySnapshot = getDocs(q)
+        const contactRef = collection(fireStore, "contacts");
+        const q = query(contactRef, where("firstName", "==", tag ));
+
+        getDocs(q)
         .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 fromFB.push(doc.data())
@@ -60,14 +57,13 @@ const Component = () => {
     const removeContact = async(id) => {
         const desertRef = ref(fireStorage, `${id}/042684f3-218e-4975-89dc-24c55e826563`);
         await deleteObject(desertRef)
-        .then(() => {
-          console.log("File deleted successfully")
-        }).catch((error) => {
-          console.log("An error occurred!")
-        });
         deleteDoc(doc(fireStore, "contacts", id))
     };
-
+    
+    useEffect(() => {
+        getContactFromBase()
+    }, []);
+    
     return (
         <div>
             <Header openComponent={openComponent} />
@@ -87,4 +83,4 @@ const Component = () => {
     );
 };
 
-export default Component;
+export default Container;

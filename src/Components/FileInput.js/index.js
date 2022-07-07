@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -6,8 +6,7 @@ import DrowImages from "./DrowImages";
 
 import style from "./index.module.scss";
 
-
-const FileInput = ({avatar, setPhotosToFB}) => {
+const FileInput = ({ avatar, setPhotosToFB }) => {
     const [currentImages, setCurrentImages] = useState([]);
 
     const onFileLoad = (e) => {
@@ -30,21 +29,22 @@ const FileInput = ({avatar, setPhotosToFB}) => {
             {currentImages && 
                 currentImages.map((item) => (
                     <span key={uuidv4()}>
-                        <DrowImages  image={item} style={style} />
+                        <DrowImages image={item} style={style} />
                     </span>
                 ))
             }
             <span>Drag an image,or load from device</span>
-            <form onSubmit={(e)=>handleSetPhotosToFB(e)}>
-                <input type="file"
+            <form onSubmit={(e) => handleSetPhotosToFB(e)}>
+                <input 
+                    type="file"
                     multiple
                     className={style.hiddenInputFiles}
-                    onDragOver={(e)=>{
+                    onDragOver={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
                     }}
-                    onDrop={()=>onFileLoad}
-                    onChange={(e)=>onFileLoad(e)}
+                    onDrop={onFileLoad}
+                    onChange={(e) => onFileLoad(e)}
                 />
                 <div>
                     <button type="submit">Add photos</button>
@@ -54,4 +54,4 @@ const FileInput = ({avatar, setPhotosToFB}) => {
     );
 };
 
-export default FileInput;
+export default memo(FileInput);

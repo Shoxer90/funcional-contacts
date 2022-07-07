@@ -12,13 +12,13 @@ const Search = ({ getFilterContacts }) => {
     
     return (
         <div className={styles.search}>
-            <form onSubmit={(e)=>handleSearch(e)}>
+            <form onSubmit={handleSearch}>
                 <input 
                     name="filter"
                     className={styles.input}
                     type="text" 
                     placeholder="Get contact from your contact list..."
-                    onChange={(e)=>setInputs(e.target.value)}
+                    onChange={(e) => setInputs(e.target.value)}
                 />
                 <button type="submit">Search</button>
             </form>

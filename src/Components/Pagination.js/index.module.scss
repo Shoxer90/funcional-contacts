@@ -1,12 +1,12 @@
-.pagination{
+.pagination {
     display: flex;
     list-style-type: none;
-    >li{
+    li {
         border: solid black 1px;
         padding: 2px;
         text-decoration: none;
     }
-    >a{
+    a {
         text-decoration: none;
         color: red;
     }
