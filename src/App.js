@@ -4,7 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import ShowContacts from './Components/Context/Context';
 
-import Component from './Components/Container';
+import Container from './Components/Container';
 
 import './App.css';
 
@@ -14,7 +14,7 @@ const App = () => {
   return (
     <ShowContacts.Provider value={{contacts, fillContacts}}>
       <DndProvider backend={HTML5Backend}>
-        <Component />
+        <Container />
       </DndProvider>
     </ShowContacts.Provider>
   );

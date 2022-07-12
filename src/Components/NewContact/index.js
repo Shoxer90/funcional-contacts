@@ -4,7 +4,7 @@ import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 import { fireStorage } from "../../Config/firebaseInit";
-import setContacts from "../../Services/setContacts";
+import setContacts from "../../Modules/setContacts";
 
 import styles from "./index.module.scss";
 import Inputs from "./Inputs";
@@ -30,10 +30,10 @@ const Form = ({ openComponent, getContactFromBase }) => {
     const dontSetNewContact = (e) => {
         e.preventDefault();
         openComponent();
-    }
+    };
 
     const sendPicToStorage = (e) => {
-        const picNameId = uuidv4()
+        const picNameId = uuidv4();
         const imageRef = ref(fireStorage, `contactAvatars/${picNameId}`);
             uploadBytes(imageRef, e.target[4].files[0]).then(() => {
             const imageListRef = ref(fireStorage, `contactAvatars/`);
@@ -76,7 +76,7 @@ const Form = ({ openComponent, getContactFromBase }) => {
             }
           
             <label>
-                Get photo 
+                "Get photo"
                 <input type="file" name="avatar" />
             </label>
             <button type="submit">add contact</button>

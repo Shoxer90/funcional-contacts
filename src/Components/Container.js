@@ -1,84 +1,122 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import { collection, deleteDoc, doc, getDocs, query ,where} from "firebase/firestore";
-
-import { fireStore, fireStorage } from "../Config/firebaseInit";
+import { collection, deleteDoc, doc, endBefore, getDocs, limit, orderBy, query ,startAfter, startAt } from "firebase/firestore";
 
 import ShowContacts from "./Context/Context";
+
+import { fireStore } from "../Config/firebaseInit";
+
 import Header from "./Header";
 import Search from "./Search";
 import Contacts from "./Contacts";
 import NewContact from "./NewContact";
-import Pagination from "./Pagination.js/index.js";
-import { deleteObject, ref } from "firebase/storage";
+import Pagination from "./Pagination";
+
+import drowPagination from "../Modules/pagination";
+import onPageButtonClick from "../Modules/onPageButtonClick";
+import getContactFromBase from "../Modules/getAllContacts";
+import PAGE_LIMIT from "../Modules/modules";
 
 const Container = () => {
-    const { contacts, fillContacts } = useContext(ShowContacts);
+    const {contacts, fillContacts} = useContext(ShowContacts);
     const [openNewContact, setStatusNewContact] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [contactPerPage] = useState(5);
-
-    const getContactFromBase = () => {
-        const fromFB = [];
-        const q = query(collection(fireStore, "contacts"));
-
-        getDocs(q)
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                fromFB.push(doc.data())
-            });
-            fillContacts(fromFB);
-        });
-    };
-    
-    const lastContactIndex = currentPage * contactPerPage;
-    const firstContactIndex = lastContactIndex - contactPerPage;
-    const contactsInPage = contacts.slice(firstContactIndex, lastContactIndex);
-
-    const paginate = page => setCurrentPage(page);
-
+    const [pageContacts,setPageContacts] = useState([]);
+    const [pageDoc, setPageDoc] = useState([]);
+    const [pagination, setPagination] = useState([]);
+   
     const openComponent = () => setStatusNewContact(!openNewContact);
 
-// the function filtring only whole word not includes-must fix it
-    const getFilterContacts = tag => {
-        const fromFB = [];
-        const contactRef = collection(fireStore, "contacts");
-        const q = query(contactRef, where("firstName", "==", tag ));
-
-        getDocs(q)
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                fromFB.push(doc.data())
-            });
-            fillContacts(fromFB);
-        });
+    const removeContact = id => {
+        deleteDoc(doc(fireStore, "contacts", id));
     };
 
-    const removeContact = async(id) => {
-        const desertRef = ref(fireStorage, `${id}/042684f3-218e-4975-89dc-24c55e826563`);
-        await deleteObject(desertRef)
-        deleteDoc(doc(fireStore, "contacts", id))
+    const getSnapshotsForPagination = async (data) => {
+        const documentSnapshots = await getDocs(data);
+
+        const handleData = documentSnapshots.docs.map((doc) => doc.data());
+        if (handleData.length === 0) {
+            return;
+        }
+        setPageContacts(handleData);
+        setPageDoc(documentSnapshots);
+    };
+
+    const fetch = async () => {
+        const page = query(collection(fireStore, "contacts"), orderBy("firstName"), limit(PAGE_LIMIT));
+        getSnapshotsForPagination(page);
+
+        const newContacts = await getContactFromBase();
+        fillContacts(newContacts);
+        
+        const paginate = await drowPagination(contacts.length);
+        setPagination(paginate);
+    };
+
+    const buttonPagination = (arg) => {
+        if (arg === ">") {
+            fetchAfter();
+        }else if (arg === "<") {
+            fetchPrevious();
+        }else{
+           const page = onPageButtonClick(arg)
+           .then((page) => {
+               getSnapshotsForPagination(page);
+           })
+        };
+    };
+
+    const fetchAfter = async () => {
+        const lastVisible = pageDoc.docs[pageDoc.docs.length - 1];
+
+        const page = query(collection(fireStore, "contacts"),
+        orderBy("firstName"),
+        startAfter(lastVisible),
+        limit(PAGE_LIMIT));
+
+        getSnapshotsForPagination(page);
     };
     
+    const fetchPrevious = async () => {
+        const prevPageEnd = pageDoc.docs[0];
+
+        const previousAllData = query(collection(fireStore, "contacts"),
+        orderBy("firstName"),
+        endBefore(prevPageEnd));
+
+        const previousAllDataDocs = await getDocs(previousAllData);
+
+        const prevPageStart = previousAllDataDocs.docs[previousAllDataDocs.docs.length - PAGE_LIMIT];
+
+        const page = query(collection(fireStore, "contacts"),
+        orderBy("firstName"),
+        startAt(prevPageStart),
+        endBefore(prevPageEnd),
+        limit(PAGE_LIMIT));
+
+        getSnapshotsForPagination(page);
+    };
+
     useEffect(() => {
-        getContactFromBase()
+        fetch();
     }, []);
-    
+
     return (
         <div>
             <Header openComponent={openComponent} />
-            <Search getFilterContacts={getFilterContacts} />
-            {openNewContact &&
-                <NewContact openComponent={openComponent} getContactFromBase={getContactFromBase} />
+            <Search />
+            { openNewContact &&
+                <NewContact openComponent={openComponent} />
             }
-            {!openNewContact && contacts &&
-                <Contacts contacts={contactsInPage} removeContact={removeContact} />
+            { !openNewContact && pageContacts &&
+                <Contacts pageContacts={pageContacts} removeContact={removeContact} />
             }
-            <Pagination
-                contactPerPage={contactPerPage}
-                contactsQuantity={contacts.length}
-                paginate={paginate}
-            />
+           {pagination.map((page) => (
+                <Pagination
+                    page={page} 
+                    key={Math.random()} 
+                    buttonPagination={buttonPagination} 
+                />
+            ))}
         </div>
     );
 };

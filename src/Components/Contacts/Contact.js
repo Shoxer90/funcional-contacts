@@ -3,7 +3,7 @@ import React, {  useState } from "react";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
 import { fireStorage } from "../../Config/firebaseInit";
-import setPhotosToUserData from "../../Services/setPhotosToUserData";
+import setPhotosToUserData from "../../Modules/setPhotosToUserData";
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,7 +22,7 @@ const Contact = ({
     phone,
     email,
     firstName,
-    removeContact}) => {
+    removeContact }) => {
         
     const [showMore, setShowMore] = useState(false);
     const [showDownloader, setShowDownloader] = useState(false);
@@ -45,6 +45,7 @@ const Contact = ({
                 });
             });
         });
+        
         setUserPhoto(arrOfImg);
         setPhotosToUserData(userPhoto, id);
     };
