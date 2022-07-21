@@ -1,8 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { collection, deleteDoc, doc, endBefore, getDocs, limit, orderBy, query ,startAfter, startAt } from "firebase/firestore";
-
-import ShowContacts from "./Context/Context";
+import { collection, endBefore, getDocs, limit, orderBy, query ,startAfter, startAt } from "firebase/firestore";
 
 import { fireStore } from "../Config/firebaseInit";
 
@@ -16,9 +14,10 @@ import drowPagination from "../Modules/pagination";
 import onPageButtonClick from "../Modules/onPageButtonClick";
 import getContactFromBase from "../Modules/getAllContacts";
 import PAGE_LIMIT from "../Modules/modules";
+import deleteStorageIMGS from "../Modules/deleteStorageIMGS";
+import removeDocument from "../Modules/removeDocument";
 
 const Container = () => {
-    const {contacts, fillContacts} = useContext(ShowContacts);
     const [openNewContact, setStatusNewContact] = useState(false);
     const [pageContacts,setPageContacts] = useState([]);
     const [pageDoc, setPageDoc] = useState([]);
@@ -27,13 +26,16 @@ const Container = () => {
     const openComponent = () => setStatusNewContact(!openNewContact);
 
     const removeContact = id => {
-        deleteDoc(doc(fireStore, "contacts", id));
+        deleteStorageIMGS("coll", id);
+        deleteStorageIMGS("avatar", id);
+        removeDocument(id);
     };
 
     const getSnapshotsForPagination = async (data) => {
         const documentSnapshots = await getDocs(data);
 
         const handleData = documentSnapshots.docs.map((doc) => doc.data());
+
         if (handleData.length === 0) {
             return;
         }
@@ -42,13 +44,14 @@ const Container = () => {
     };
 
     const fetch = async () => {
-        const page = query(collection(fireStore, "contacts"), orderBy("firstName"), limit(PAGE_LIMIT));
+        const page = query(collection(fireStore, "contacts"), 
+        orderBy("firstName"), 
+        limit(PAGE_LIMIT));
         getSnapshotsForPagination(page);
 
-        const newContacts = await getContactFromBase();
-        fillContacts(newContacts);
+        const allContacts = await getContactFromBase();
         
-        const paginate = await drowPagination(contacts.length);
+        const paginate = await drowPagination(allContacts.length);
         setPagination(paginate);
     };
 
@@ -58,10 +61,10 @@ const Container = () => {
         }else if (arg === "<") {
             fetchPrevious();
         }else{
-           const page = onPageButtonClick(arg)
+           onPageButtonClick(arg)
            .then((page) => {
                getSnapshotsForPagination(page);
-           })
+           });
         };
     };
 
@@ -92,7 +95,6 @@ const Container = () => {
         startAt(prevPageStart),
         endBefore(prevPageEnd),
         limit(PAGE_LIMIT));
-
         getSnapshotsForPagination(page);
     };
 
@@ -103,7 +105,7 @@ const Container = () => {
     return (
         <div>
             <Header openComponent={openComponent} />
-            <Search />
+            <Search getSnapshotsForPagination={getSnapshotsForPagination} />
             { openNewContact &&
                 <NewContact openComponent={openComponent} />
             }

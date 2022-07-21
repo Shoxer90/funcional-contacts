@@ -4,10 +4,13 @@ import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 import { fireStorage } from "../../Config/firebaseInit";
+
 import setContacts from "../../Modules/setContacts";
+import Inputs from "./Inputs";
+
+import CONTACT_KEYS from "../../Modules/getKeysOfContacts";
 
 import styles from "./index.module.scss";
-import Inputs from "./Inputs";
 
 const Form = ({ openComponent, getContactFromBase }) => {
     const [state, setState] = useState({
@@ -18,8 +21,6 @@ const Form = ({ openComponent, getContactFromBase }) => {
         avatar: "",
     });
    
-    const inputs = ["firstName", "lastName", "phone", "email"];
-
     const handleInputChange = (e) => {
         setState({
             ...state,
@@ -33,17 +34,17 @@ const Form = ({ openComponent, getContactFromBase }) => {
     };
 
     const sendPicToStorage = (e) => {
-        const picNameId = uuidv4();
-        const imageRef = ref(fireStorage, `contactAvatars/${picNameId}`);
+        const userId = uuidv4();
+        const imageRef = ref(fireStorage, `contactAvatars/${userId}`);
             uploadBytes(imageRef, e.target[4].files[0]).then(() => {
             const imageListRef = ref(fireStorage, `contactAvatars/`);
             listAll(imageListRef).then((response) => {
                 response.items.forEach((item) => {
-                    if (item.name === picNameId) {
+                    if (item.name === userId) {
                         getDownloadURL(item).then((uploadPicUrl) => {
                         setState({
                                 ...state,
-                                id:uuidv4(),
+                                id: userId,
                                 avatar: uploadPicUrl,
                             });
                         });
@@ -63,7 +64,7 @@ const Form = ({ openComponent, getContactFromBase }) => {
 
     return (
         <form onSubmit={handleSetContact} className={styles.newContact}>
-            {inputs.map((input) =>(
+            {CONTACT_KEYS.map((input) =>(
                 <div key={input}>
                     <Inputs 
                         name={input}
