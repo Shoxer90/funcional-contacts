@@ -1,0 +1,39 @@
+.fileLoader {
+    display: flex;
+    flex-direction: column;
+    background-color: pink;
+}
+.fileLoaderComponent {
+    position: relative;
+    height: 300px;
+    width: 90%;
+    background-color: #eee;
+    border-radius: 10px;
+    border: solid #333;
+    text-align: center;
+    color: #333;
+    align-items: center;
+    margin: 20px;
+    button {
+        position: sticky;
+        margin-top: 22%;
+    }
+}
+.hiddenInputFiles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+}
+.imageAploader {
+    font-size: x-small;
+    width: 50px;
+    height: 50px;
+    opacity: 60%;
+    border-radius: 3px;
+    border : black solid 1px;
+    margin: 10px;
+    display: block;
+}
